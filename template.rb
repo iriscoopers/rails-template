@@ -39,12 +39,18 @@ def setup_devise
   end
 
   rails_command "be db:migrate"
-  generate "devise:views"
+  generate "devise:views -v sessions"
+  create_file "app/views/devise/sessions/new.html.slim" do
+    <<-CODE
+    h2= "Log in"
+    = render "devise/shared/links"
+    CODE
+  end
 end
 
 def setup_google_omniauth
   inject_into_file "app/models/user.rb", before: "end" do
-    <<-HEREDOC
+    <<-CODE
                :omniauthable, :omniauth_providers => [:google_oauth2]
 
     def self.from_omniauth(auth)
@@ -74,11 +80,11 @@ def setup_google_omniauth
         end
       end
     end
-    HEREDOC
+    CODE
   end
 
   inject_into_file "config/initializers/devise.rb", before: "# ==> Warden configuration" do
-    <<-HEREDOC
+    <<-CODE
       config.omniauth :google_oauth2, ENV['GOOGLE_KEY'], ENV['GOOGLE_SECRET'], {
         access_type: "offline",
         approval_prompt: "",
