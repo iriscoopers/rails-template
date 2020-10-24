@@ -31,7 +31,7 @@ def setup_devise
   # set default value for admin to false
   in_root do
     migration = Dir.glob('db/migrate/*').max_by { |f| File.mtime(f) }
-    gsub_file migration, /:admin/, ':admin, default: false'
+    gsub_file migration, /:admin/, ":admin, default: false"
   end
 
   insert_into_file "app/controllers/application_controller.rb", before: "end" do
