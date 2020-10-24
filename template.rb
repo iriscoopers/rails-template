@@ -115,3 +115,8 @@ def setup_google_omniauth
     CODE
   end
 end
+
+after_bundle do
+  setup_devise
+  setup_google_omniauth
+end
