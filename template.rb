@@ -16,9 +16,9 @@ run "bundle install"
 
 create_file ".env" do
   key = ask("What is your Google api's key?")
-  "GOOGLE_KEY=#{key}"
   secret = ask("What is your Google api's secret?")
-  "GOOGLE_SECRET=#{secret}"
+  "GOOGLE_KEY=#{key}\n
+  GOOGLE_SECRET=#{secret}"
 end
 
 insert_into_file "config/application.rb", before: "end\nend" do
