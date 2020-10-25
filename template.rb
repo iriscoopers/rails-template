@@ -18,24 +18,18 @@ create_file ".env" do
   "GOOGLE_KEY=#{key}\nGOOGLE_SECRET=#{secret}"
 end
 
-insert_into_file "config/application.rb", before: "  end\nend" do
-<<-CODE
-    config.generators do |g|
-      g.template_engine :slim
-    end
-CODE
-end
+environment "config.generators { |g| g.template_engine :slim }"
 
 def setup_devise
   run "spring stop && spring start"
   generate "devise:install"
-  environment "config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }",
+  environment "config.action_mailer.default_url_options = { host: \"localhost\", port: 3000 }",
     env: "development"
   generate :devise, "User", "avatar:string", "admin:boolean"
 
   # set default value for admin to false
   in_root do
-    migration = Dir.glob('db/migrate/*').max_by { |f| File.mtime(f) }
+    migration = Dir.glob("db/migrate/*").max_by { |f| File.mtime(f) }
     gsub_file migration, /:admin/, ":admin, default: false"
   end
 
@@ -59,6 +53,10 @@ def setup_devise
 end
 
 def setup_google_omniauth
+  in_root do
+    gsub_file "app/models/user.rb", /:validatable/, ":validatable,"
+  end
+
   insert_into_file "app/models/user.rb", before: "end" do
 <<-CODE
          :omniauthable, :omniauth_providers => [:google_oauth2]
@@ -93,9 +91,9 @@ def setup_google_omniauth
 CODE
   end
 
-  inject_into_file "config/initializers/devise.rb", before: "# ==> Warden configuration" do
+  insert_into_file "config/initializers/devise.rb", before: "# ==> Warden configuration" do
     <<~CODE
-      config.omniauth :google_oauth2, ENV['GOOGLE_KEY'], ENV['GOOGLE_SECRET'], {
+      config.omniauth :google_oauth2, ENV["GOOGLE_KEY"], ENV["GOOGLE_SECRET"], {
         access_type: "offline",
         approval_prompt: "",
         prompt: "select_account",
