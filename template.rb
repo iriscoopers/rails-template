@@ -127,16 +127,113 @@ CODE
     gsub_file "config/routes.rb", /  devise_for(.*?)routing\.html\n/m,
 <<-CODE
   devise_scope :user do
-    root to: 'devise/sessions#new'
+    root to: "devise/sessions#new"
   end
 
   devise_for :users,
-    controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+    controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
 CODE
+  end
+end
+
+def setup_materialize
+  run "yarn add materialize-css"
+
+  insert_into_file "app/javascript/packs/application.js", after: "require(\"channels\")\n" do
+    <<~CODE
+      import "../stylesheets/application.sass";
+      import "materialize-css/dist/js/materialize"
+
+      $(document).on("turbolinks:load", function(e) {
+        Materialize.updateTextFields();
+        $(".button-collapse").sideNav();
+      });
+    CODE
+  end
+
+  create_file "app/javascript/stylesheets/application.sass" do
+    <<~CODE
+      @import "materialize-css/dist/css/materialize"
+      @import "variables"
+      @import "base"
+    CODE
+  end
+
+  create_file "app/javascript/stylesheets/variables.sass" do
+    <<~CODE
+      $primary-color: #2F4858 !default
+      $secondary-color: #FFBB00 !default
+    CODE
+  end
+
+  create_file "app/javascript/stylesheets/base.sass" do
+<<-CODE
+nav
+  background-color: $primary-color
+CODE
+  end
+end
+
+def setup_views
+  remove_file "app/views/layouts/application.html.erb"
+
+  create_file "app/views/layouts/application.html.slim" do
+    <<~CODE
+      doctype html
+      html
+        head
+          title= "Template"
+          meta name="keywords" content="Template"
+          meta name="author" content="author"
+          meta charset="utf-8"
+          meta name="viewport" content="width=device-width,initial-scale=1"
+
+          = stylesheet_link_tag "https://fonts.googleapis.com/icon?family=Material+Icons"
+          = stylesheet_link_tag "application", media: "all", "data-turbolinks-track": "reload"
+          = javascript_pack_tag "application", "data-turbolinks-track": "reload"
+          = csrf_meta_tags
+
+        body
+          = render "shared/navigation"
+          = render "shared/messages"
+
+          .container class="\#{controller_name} \#{action_name}"
+            = yield
+    CODE
+  end
+
+  create_file "app/views/shared/_messages.html.slim" do
+  end
+
+  create_file "app/views/shared/_navigation.html.slim" do
+    <<~CODE
+      nav
+        .nav-wrapper
+          = link_to "Template", root_path, class: "brand-logo"
+          = link_to content_tag(:i, "menu", class: "material-icons"), "#", data: { activates: "mobile" }, class: "button-collapse"
+
+          ul.right.hide-on-med-and-down
+            - if current_user
+              li= link_to content_tag(:i, "home", class: "material-icons"), root_path
+              li= link_to content_tag(:i, "power_settings_new", class: "material-icons"), destroy_user_session_path, method: :delete
+            - else
+              li= link_to content_tag(:i, "power_settings_new", class: "material-icons"), new_user_session_path
+          ul.side-nav#mobile
+            - if current_user
+              li= link_to destroy_user_session_path, method: :delete do
+                i.material-icons= "power_settings_new"
+                = "Logout"
+            - else
+              li= link_to new_user_session_path do
+                i.material-icons= "power_settings_new"
+                = "Login"
+    CODE
   end
 end
 
 after_bundle do
   setup_devise
   setup_google_omniauth
+  setup_materialize
+  setup_views
 end
