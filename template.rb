@@ -3,9 +3,7 @@
 gem "devise"
 gem "slim-rails"
 gem "omniauth-google-oauth2"
-gem "materialize-sass"
 gem "httparty"
-gem "jquery-rails"
 
 gem_group :development, :test do
   gem "rspec-rails"
