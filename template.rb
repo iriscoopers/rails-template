@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 gem "devise"
-gem "slim"
 gem "slim-rails"
 gem "omniauth-google-oauth2"
 gem "materialize-sass"
@@ -20,6 +19,12 @@ create_file ".env" do
   "GOOGLE_KEY=#{key}"
   secret = ask("What is your Google api's secret?")
   "GOOGLE_SECRET=#{secret}"
+end
+
+insert_into_file "config/application.rb", before: "end\nend" do
+  config.generators do |g|
+    g.template_engine :slim
+  end
 end
 
 def setup_devise
