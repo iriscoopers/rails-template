@@ -28,6 +28,7 @@ insert_into_file "config/application.rb", before: "end\nend" do
 end
 
 def setup_devise
+  run "spring stop && spring start"
   generate "devise:install"
   environment "config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }",
     env: "development"
