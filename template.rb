@@ -17,14 +17,15 @@ run "bundle install"
 create_file ".env" do
   key = ask("What is your Google api's key?")
   secret = ask("What is your Google api's secret?")
-  "GOOGLE_KEY=#{key}\n
-  GOOGLE_SECRET=#{secret}"
+  "GOOGLE_KEY=#{key}\nGOOGLE_SECRET=#{secret}"
 end
 
-insert_into_file "config/application.rb", before: "end\nend" do
-  config.generators do |g|
-    g.template_engine :slim
-  end
+insert_into_file "config/application.rb", before: "  end\nend" do
+<<-CODE
+    config.generators do |g|
+      g.template_engine :slim
+    end
+CODE
 end
 
 def setup_devise
@@ -38,14 +39,6 @@ def setup_devise
   in_root do
     migration = Dir.glob('db/migrate/*').max_by { |f| File.mtime(f) }
     gsub_file migration, /:admin/, ":admin, default: false"
-  end
-
-  insert_into_file "config/routes.rb", before: "devise_for :users" do <<-CODE
-  devise_scope :user do
-    root to: 'devise/sessions#new'
-  end
-
-  CODE
   end
 
   insert_into_file "app/controllers/application_controller.rb", before: "end" do
@@ -68,7 +61,8 @@ def setup_devise
 end
 
 def setup_google_omniauth
-  insert_into_file "app/models/user.rb", before: "end" do <<-CODE
+  insert_into_file "app/models/user.rb", before: "end" do
+<<-CODE
          :omniauthable, :omniauth_providers => [:google_oauth2]
 
   def self.from_omniauth(auth)
@@ -131,6 +125,18 @@ CODE
         end
       end
     CODE
+  end
+
+  in_root do
+    gsub_file "config/routes.rb", /  devise_for(.*?)routing\.html\n/m,
+<<-CODE
+  devise_scope :user do
+    root to: 'devise/sessions#new'
+  end
+
+  devise_for :users,
+    controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+CODE
   end
 end
 
