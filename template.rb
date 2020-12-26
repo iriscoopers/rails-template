@@ -137,7 +137,19 @@ CODE
 end
 
 def setup_materialize
-  run "yarn add materialize-css"
+  run "yarn add materialize-css jquery"
+
+  insert_into_file "config/webpack/environment.js", after: "require('@rails/webpacker')\n" do
+    <<~CODE
+      const webpack = require('webpack')
+      environment.plugins.append('Provide', new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery',
+        'window.jQuery': 'jquery'
+      }))
+
+    CODE
+  end
 
   insert_into_file "app/javascript/packs/application.js", after: "require(\"channels\")\n" do
     <<~CODE
