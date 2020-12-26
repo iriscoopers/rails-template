@@ -160,9 +160,11 @@ def setup_materialize
     CODE
   end
 
+  insert_into_file "app/javascript/packs/application.js", after: "require(\"channels\")\n" do
+    <<~CODE
       $(document).on("turbolinks:load", function(e) {
-        Materialize.updateTextFields();
-        $(".button-collapse").sideNav();
+        M.updateTextFields();
+        $(".button-collapse").sidenav();
       });
     CODE
   end
