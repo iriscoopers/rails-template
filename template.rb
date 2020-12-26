@@ -151,10 +151,14 @@ def setup_materialize
     CODE
   end
 
-  insert_into_file "app/javascript/packs/application.js", after: "require(\"channels\")\n" do
+  insert_into_file "app/javascript/packs/application.js", before: "require(\"@rails/ujs\")" do
     <<~CODE
       import "../stylesheets/application.sass";
       import "materialize-css/dist/js/materialize"
+      import "jquery/dist/jquery"
+
+    CODE
+  end
 
       $(document).on("turbolinks:load", function(e) {
         Materialize.updateTextFields();
