@@ -228,23 +228,21 @@ def setup_views
       nav
         .nav-wrapper
           = link_to "Template", root_path, class: "brand-logo"
-          = link_to content_tag(:i, "menu", class: "material-icons"), "#", data: { activates: "mobile" }, class: "button-collapse"
+          = link_to content_tag(:i, "menu", class: "material-icons"), "#", data: { target: "mobile" }, class: "sidenav-trigger"
 
           ul.right.hide-on-med-and-down
             - if current_user
-              li= link_to content_tag(:i, "home", class: "material-icons"), root_path
-              li= link_to content_tag(:i, "power_settings_new", class: "material-icons"), destroy_user_session_path, method: :delete
+              li= link_to "Home", root_path
+              li= link_to "Logout", destroy_user_session_path, method: :delete
             - else
-              li= link_to content_tag(:i, "power_settings_new", class: "material-icons"), new_user_session_path
-          ul.side-nav#mobile
+              li= link_to "Login", new_user_session_path
+
+          ul.sidenav#mobile
             - if current_user
-              li= link_to destroy_user_session_path, method: :delete do
-                i.material-icons= "power_settings_new"
-                = "Logout"
+              li= link_to "Home", root_path
+              li= link_to "Logout", destroy_user_session_path, method: :delete
             - else
-              li= link_to new_user_session_path do
-                i.material-icons= "power_settings_new"
-                = "Login"
+              li= link_to "Login", new_user_session_path
     CODE
   end
 end
