@@ -34,10 +34,30 @@ def setup_devise
   end
 
   insert_into_file "app/controllers/application_controller.rb", before: "end" do
+    "  protect_from_forgery with: :exception\n"
     "  before_action :authenticate_user!\n"
   end
 
   rails_command "db:migrate"
+
+  create_file "app/controllers/registrations_controller.rb" do
+    <<~CODE
+      class RegistrationsController < Devise::RegistrationsController
+        before_action :one_user_registered?
+
+        private
+
+        def one_user_registered?
+          if (User.count == 1) & user_signed_in?
+            redirect_to root_path
+          elsif User.count == 1
+            redirect_to new_user_session_path
+          end
+        end
+      end
+    CODE
+  end
+
   create_file "app/views/devise/sessions/new.html.slim" do
     <<~CODE
       h2= "Log in"
@@ -126,12 +146,17 @@ CODE
   in_root do
     gsub_file "config/routes.rb", /  devise_for(.*?)routing\.html\n/m,
 <<-CODE
-  devise_scope :user do
-    root to: "devise/sessions#new"
-  end
+  root "pages#index"
 
   devise_for :users,
+    skip: [:registrations],
     controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
+
+  as :user do
+    get "users/sign_up" => "registrations#new", as: :new_user_registration
+    post "users" => "registrations#create", as: :user_registration
+    get "users/cancel" => "registrations#cancel", as: :cancel_user_registration
+  end
 CODE
   end
 end
