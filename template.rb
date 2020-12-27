@@ -217,6 +217,22 @@ CODE
   end
 end
 
+def setup_pages
+  create_file "app/controllers/pages_controller.rb" do
+    <<~CODE
+      class PagesController < ApplicationController
+        def index; end
+      end
+    CODE
+
+    create_file "app/views/pages/index.html.slim" do
+      <<~CODE
+        h2="Home"
+      CODE
+    end
+  end
+end
+
 def setup_views
   remove_file "app/views/layouts/application.html.erb"
 
