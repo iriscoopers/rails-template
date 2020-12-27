@@ -224,12 +224,12 @@ def setup_pages
         def index; end
       end
     CODE
+  end
 
-    create_file "app/views/pages/index.html.slim" do
-      <<~CODE
+  create_file "app/views/pages/index.html.slim" do
+    <<~CODE
         h2="Home"
-      CODE
-    end
+    CODE
   end
 end
 
@@ -292,5 +292,6 @@ after_bundle do
   setup_devise
   setup_google_omniauth
   setup_materialize
+  setup_pages
   setup_views
 end
