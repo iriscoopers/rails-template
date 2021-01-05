@@ -18,6 +18,10 @@ create_file ".env" do
   "GOOGLE_KEY=#{key}\nGOOGLE_SECRET=#{secret}"
 end
 
+insert_into_file ".gitignore", after: "/config/master.key" do
+  "\n.env"
+end
+
 environment "config.generators { |g| g.template_engine :slim }"
 
 def setup_devise
