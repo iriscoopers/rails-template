@@ -1,4 +1,34 @@
 # frozen_string_literal: true
+#
+# Git clone rails docker bootstrap
+# cd into new directory
+# run docker compose run --no-deps web rails new . --force --database=postgresql --css=tailwind --asset-pipeline=propshaft
+# run docker compose build
+# add database host, username and password to database.yml
+# git commit db config changes
+# run docker compose up db
+# run docker compose run web rails app:template LOCATION=https://gist.githubusercontent.com/iriscoopers/0b0289625f596185cbc36cb704b0f49b/raw/3c1204723df8bfbc1c6c6a34b0c29b0b97323c12/rails_template.rb
+#
+# Repo init
+# - git init
+# - first commit
+# Add files:
+# - Dockerfile
+# - entrypoint
+# - Gemfiles
+#
+# Ru
+#
+# - template
+#   - point to db container in database.yml
+# - docker-compose.yml
+#
+# Run docker compose
+#
+# Run docker compose up rails new etc command
+#
+
+run "bundle install"
 
 environment
   <<~CODE
