@@ -19,7 +19,17 @@ environment
     end
   CODE
 
-@project_name = ask("What is this project's name?")
+def configure_database
+  inside("config") do
+    insert_into_file "database.yml", before: "  pool:" do
+      <<~CODE
+        host: db
+         username: postgres
+         password: password
+      CODE
+    end
+  end
+end
 
 def add_devise
   generate "devise:install"
@@ -168,7 +178,7 @@ end
 
 def scaffold_pages
   generate "scaffold", "Pages title:string description:text, user:references"
-  rails "db:migrate"
+  rails_command "db:migrate"
 end
 
 def import_tailwind
@@ -233,6 +243,9 @@ def add_layout
 end
 
 after_bundle do
+  @project_name = ask("What is this project's name?")
+
+  configure_database
   add_devise
   scaffold_user
   add_google_omniauth
