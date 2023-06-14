@@ -179,7 +179,7 @@ CODE
 end
 
 def scaffold_pages
-  generate "scaffold", "Pages title:string description:text, user:references"
+  generate "scaffold", "Pages title:string description:text user:references"
   rails_command "db:migrate"
 end
 
