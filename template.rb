@@ -198,7 +198,7 @@ def add_layout
       !!!
       %html
         %head
-          %title #{@project_name}
+          %title #{Rails.application.class.module_parent.name}
           %meta{name: "viewport", content: "width=device-width,initial-scale=1"}
           = csrf_meta_tags
           = csp_meta_tag
@@ -222,7 +222,7 @@ def add_layout
     <<~CODE
       nav
         .mx-auto max-w-7xl px-2 sm:px-6 lg:px-8
-          = link_to #{@project_name}, root_path, class: "brand-logo"
+          = link_to #{Rails.application.class.module_parent.name}, root_path, class: "brand-logo"
           = link_to content_tag(:i, "menu", class: "text-white p-2 ml-2 cursor-pointer"), "#", data: { target: "mobile" }, class: "sidenav-trigger"
 
           %ulul.right
@@ -243,8 +243,6 @@ def add_layout
 end
 
 after_bundle do
-  @project_name = ask("What is this project's name?")
-
   configure_database
   add_devise
   scaffold_user
