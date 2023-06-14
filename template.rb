@@ -30,7 +30,7 @@ def configure_database
     end
   end
 
-  rails_command "db:create"
+  rails_command "db:reset"
 end
 
 def add_devise
