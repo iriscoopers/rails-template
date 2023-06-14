@@ -29,6 +29,8 @@ def configure_database
       YAML
     end
   end
+
+  rails_command "db:create"
 end
 
 def add_devise
