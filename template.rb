@@ -179,7 +179,7 @@ CODE
 end
 
 def scaffold_pages
-  generate "scaffold", "Pages title:string description:text user:references"
+  generate "scaffold", "Page title:string description:text user:references"
   rails_command "db:migrate"
 end
 
@@ -252,5 +252,5 @@ after_bundle do
   add_devise_routes
   scaffold_pages
   import_tailwind
-  add_views
+  add_layout
 end
