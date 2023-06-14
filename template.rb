@@ -22,11 +22,11 @@ environment
 def configure_database
   inside("config") do
     insert_into_file "database.yml", before: "  pool:" do
-      <<~CODE
+      <<~YAML.indent(2)
         host: db
-         username: postgres
-         password: password
-      CODE
+        username: postgres
+        password: password
+      YAML
     end
   end
 end
